@@ -1,15 +1,20 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { PasiensServices } from './pasiens.service';
 import { PasiensController } from './pasiens.controller';
-import { Pasiens } from './pasiens-entity';
+import { DatabaseModule } from 'src/database.module';
+import { pasiensProviders } from './pasiens.providers';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Pasiens } from './pasiens.model';
+import { karyawans } from 'src/model/karyawans';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pasiens])],
-  exports: [TypeOrmModule],
+  // providers: [PasiensServices],
+  // controllers: [PasiensController],
   providers: [PasiensServices],
-  controllers: [PasiensController],
+  exports: [SequelizeModule],
+  imports: [SequelizeModule.forFeature([karyawans])],
+  controllers: [PasiensController]
 })
 
 export class PasiensModule { }

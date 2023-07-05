@@ -1,30 +1,26 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Pasiens } from './pasiens/pasiens-entity'
+import { Pasiens } from './pasiens/pasiens.model'
 import { PasiensModule } from './pasiens/pasiens.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DataSource } from 'typeorm';
-
+import { databaseProviders } from './database.providers';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { PasiensController } from './pasiens/pasiens.controller';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: "mysql",
-      host: "localhost",
+    SequelizeModule.forRoot({
+      dialect: 'mysql',
+      host: 'localhost',
       port: 3306,
-      username: "root",
-      password: "",
-      database: "db_simrs",
-      entities: [Pasiens],
-      synchronize: true,
-      autoLoadEntities: true
+      username: 'root',
+      password: '',
+      database: 'db_simrs',
+      models: [Pasiens],
     }),
     PasiensModule
   ],
-  controllers : [AppController],
-  providers : [AppService],
 })
 export class AppModule {
-	constructor(private dataSource: DataSource) {}
+
 }

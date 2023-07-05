@@ -1,40 +1,43 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Pasiens } from './pasiens-entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { karyawans } from './src/model/karyawans';
+import { initModels } from 'src/model/init-models';
 
 @Injectable()
 export class PasiensServices {
+    sequelize = new Sequelize('db_simrs', 'root', '', {host: 'localhost', dialect: 'mysql'})
 
-    constructor(@InjectRepository(Pasiens) private pasiensRepository: Repository<Pasiens>) { }
+    // private readonly karyawans : karyawans[] = [];
 
-    findAll(): Promise<Pasiens[]> {
-        return this.pasiensRepository.find();
+    constructor(
+        @InjectModel(karyawans)
+       private pasienModel: typeof karyawans, 
+    ) 
+    {}
+
+    async findAll(): Promise<karyawans[]> {
+        initModels(this.sequelize)
+        return this.pasienModel.findAll({
+            attributes: ['namaLengkap', 'alamat']
+        });
     }
 
-    // findAll(): Promise<Pasiens[]> {
-    //   return this.pasiensRepository.find({
-    //     select: ["id", "namaLengkap", "noHp", "alamat", "tanggalLahir", "jenisKelamin"],
-    //   });
-    // }
-
-    // getPasien(_id: number): Promise<Pasien[]> {
-    //     return await this.pasiensRepository.find({
-    //         select: ["id", "namaLengkap", "noHp", "alamat", "tanggalLahir", "jenisKelamin", "created_at"],
-    //         where: [{ "id": _id }]
-    //     });
-    // }
-
-    updatePasien(pasien: Pasiens) {
-        this.pasiensRepository.save(pasien);
+    findOne(id: number): Promise<karyawans[]> {
+        initModels(this.sequelize)
+        return this.pasienModel.findAll({
+            where: {
+            id: id,
+          },
+          attributes: ['namaLengkap', 'alamat'],
+        });
     }
 
-    findOne(id: number): Promise<Pasiens | null> {
-      return this.pasiensRepository.findOneBy({id});
+    async remove(id: number): Promise<void> {
+        initModels(this.sequelize)
+        const user = await this.pasienModel.findOne();
+        await user.destroy();
     }
-
-    // async deletePasien(pasien: Pasien) {
-    //     this.pasiensRepository.delete(pasien);
-    // }
 }
