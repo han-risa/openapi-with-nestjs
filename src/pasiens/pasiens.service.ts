@@ -3,8 +3,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { karyawans } from './src/model/karyawans';
-import { initModels } from 'src/model/init-models';
+import { pasiens } from './src/model/pasiens';
+import { initModels, pasien } from 'src/model/init-models';
 
 @Injectable()
 export class PasiensServices {
@@ -13,25 +13,34 @@ export class PasiensServices {
     // private readonly karyawans : karyawans[] = [];
 
     constructor(
-        @InjectModel(karyawans)
-       private pasienModel: typeof karyawans, 
+        @InjectModel(pasiens)
+       private pasienModel: typeof pasiens, 
     ) 
     {}
 
-    async findAll(): Promise<karyawans[]> {
+    async findAll(): Promise<pasiens[]> {
         initModels(this.sequelize)
-        return this.pasienModel.findAll({
-            attributes: ['namaLengkap', 'alamat']
-        });
+        return this.pasienModel.findAll();
     }
 
-    findOne(id: number): Promise<karyawans[]> {
+    findOne(id: number): Promise<pasiens> {
         initModels(this.sequelize)
-        return this.pasienModel.findAll({
+        return this.pasienModel.findOne({
             where: {
             id: id,
           },
-          attributes: ['namaLengkap', 'alamat'],
+        });
+    }
+
+    async findDate(startDate: Date, endDate:Date): Promise<pasiens[]> {
+        initModels(this.sequelize)
+        const {Op} = require("sequelize");
+        return this.pasienModel.findAll({
+            where: {
+                created_at: {
+                    [Op.between]: [startDate + " 00:00:00", endDate + " 00:00:00"]
+                }
+            },
         });
     }
 

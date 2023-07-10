@@ -10,8 +10,6 @@ export interface pasiensAttributes {
   jenisKelamin: number;
   created_at: Date;
   updated_at: Date;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type pasiensPk = "id";
@@ -28,8 +26,6 @@ export class pasiens extends Model<pasiensAttributes, pasiensCreationAttributes>
   jenisKelamin!: number;
   created_at!: Date;
   updated_at!: Date;
-  createdAt!: Date;
-  updatedAt!: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof pasiens {
@@ -62,9 +58,12 @@ export class pasiens extends Model<pasiensAttributes, pasiensCreationAttributes>
       },
       created_at: '',
       updated_at: '',
-      createdAt: { type: DataTypes.DATE, allowNull: true, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
-      updatedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
     }, {
+    defaultScope: {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
+    },
     sequelize,
     tableName: 'pasiens',
     timestamps: true,

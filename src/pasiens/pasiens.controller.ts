@@ -2,8 +2,9 @@
 import { Controller, Post, Body, Get, Put, HttpStatus, Delete, Param, Res} from '@nestjs/common';
 import { PasiensServices } from './pasiens.service';
 import { Pasiens } from './pasiens.model';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiParam, ApiResponse } from '@nestjs/swagger';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { pasiens } from 'src/model/pasiens';
 
 @Controller('pasiens')
 export class PasiensController {
@@ -15,33 +16,23 @@ export class PasiensController {
         description: 'The found record',
         type: Pasiens,
     })
-    findOne(@Param('id') id: number) {
-        const pasiens = Pasiens.findAll<Pasiens>({
-            where: {
-              id: id
-            }
-        });
-        return pasiens;
+    @ApiParam({name: 'id'})
+    findOne(@Param() params): Promise<pasiens> {
+        return this.service.findOne(params.id);
     }
 
-    // @Get('/:start-end')
-    // @ApiResponse({
-    //     status: 200,
-    //     description: 'The found record',
-    //     type: Pasiens,
-    // })
-    // findDate(@Param('start') start: Date, @Param('end') end: Date) {
-    //     const firstUser = AppDataSource
-    //     .getRepository(Pasiens)
-    //     .createQueryBuilder("pasiens")
-    //     .where("pasiens.created_at")
-    //     .getOne()
-        
-    //     return firstUser;
-    // }
+    @Get('/:start/:end')
+    @ApiResponse({
+        status: 200,
+        description: 'The found record',
+        type: Pasiens,
+    })
+    findDate(@Param('start') start: Date, @Param('end') end: Date): Promise<pasiens[]> {
+        return this.service.findDate(start, end);
+    }
 
     @Get()
-    fetchAll(@Res() response) {
+    fetchAll(): Promise<pasiens[]> {
         return this.service.findAll();
     }
 

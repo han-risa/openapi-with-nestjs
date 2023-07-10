@@ -6,14 +6,14 @@ import { DatabaseModule } from 'src/database.module';
 import { pasiensProviders } from './pasiens.providers';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Pasiens } from './pasiens.model';
-import { karyawans } from 'src/model/karyawans';
+import { pasiens } from 'src/model/pasiens';
 
 @Module({
   // providers: [PasiensServices],
   // controllers: [PasiensController],
   providers: [PasiensServices],
   exports: [SequelizeModule],
-  imports: [SequelizeModule.forFeature([karyawans])],
+  imports: [SequelizeModule.forFeature([pasiens])],
   controllers: [PasiensController]
 })
 
